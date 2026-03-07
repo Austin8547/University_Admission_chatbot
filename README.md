@@ -2,7 +2,7 @@
 
 A RAG (Retrieval-Augmented Generation) based chatbot designed to assist students with admission-related queries for Kerala University entrace examinations
 
-## 🚀 Key Features
+##  Key Features
 
 *   **Hybrid Retrieval**: Combines ChromaDB (Vector Search) and Cross-Encoder Reranking (MS MARCO) for high-accuracy document retrieval.
 *   **Intelligent Responses**: Uses Google Gemini (via LangChain) to generate helpful and context-aware answers.
@@ -11,7 +11,7 @@ A RAG (Retrieval-Augmented Generation) based chatbot designed to assist students
     *   **FastAPI Backend**: A robust REST API for integrating the chatbot into other applications.
 *   **Source Citation**: Provides clear citations for the sources of information used in the answers.
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 *   **Language**: Python 3.8+
 *   **LLM**: Google Gemini
