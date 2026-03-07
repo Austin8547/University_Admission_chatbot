@@ -8,5 +8,3 @@ langchain-core
 fastapi
 uvicorn
 streamlit
-langchain-google-genai
-python-dotenv

@@ -1,30 +1,36 @@
 import sys
-import argparse
-from dotenv import load_dotenv
-load_dotenv()
+import os
 
-from src.ragchain.rag_pipeline import query_rag
+# Fix path so "src" works
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(PROJECT_ROOT)
 
-def verify_rag_pipeline(query):
-    print(f"\n❓ Question: {query}")
-    print("-" * 50)
+try:
+    from src.ragchain.rag_chain import run_chain
+except ImportError as e:
+    print(f"Import Error: {e}")
+    sys.exit(1)
+
+# Ensure stdout handles special characters (like Rupee symbol)
+sys.stdout.reconfigure(encoding='utf-8')
+
+def test_queries():
+    queries = [
+        "What is the application fee for SC/ST candidates?",
+        "What documents are needed for admission?"
+    ]
+
+    print("Running RAG Verification...\n")
     
-    try:
-        print("🚀 Running RAG pipeline...")
-        answer = query_rag(query)
-        
-        print("\n💡 Answer:")
-        print(answer)
+    for q in queries:
+        print(f"Question: {q}")
+        try:
+            answer = run_chain(q)
+            print("Answer:")
+            print(answer)
+        except Exception as e:
+            print(f"Error: {e}")
         print("-" * 50)
-        
-    except Exception as e:
-        print(f"\n❌ Error: {e}")
-        if "Chroma DB not found" in str(e):
-            print("💡 Hint: Run the ingestion script first.")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Verify RAG Pipeline")
-    parser.add_argument("query", nargs="?", help="Question to ask", default="What documents are needed for admission?")
-    
-    args = parser.parse_args()
-    verify_rag_pipeline(args.query)
+    test_queries()
