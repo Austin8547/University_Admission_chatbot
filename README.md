@@ -1,79 +1,109 @@
 # Kerala University Admission Assistant
 
-A RAG (Retrieval-Augmented Generation) based chatbot designed to assist students with admission-related queries for Kerala University entrace examinations
+An intelligent, token-optimized RAG (Retrieval-Augmented Generation) chatbot designed to assist students with admission queries, course eligibility, syllabi, and schedules for the University of Kerala.
 
-##  Key Features
+---
 
-*   **Hybrid Retrieval**: Combines ChromaDB (Vector Search) and Cross-Encoder Reranking (MS MARCO) for high-accuracy document retrieval.
-*   **Intelligent Responses**: Uses Google Gemini (via LangChain) to generate helpful and context-aware answers.
-*   **Dual Interfaces**:
-    *   **Streamlit UI**: A user-friendly web interface with chat history, session management, and visual polish.
-    *   **FastAPI Backend**: A robust REST API for integrating the chatbot into other applications.
-*   **Source Citation**: Provides clear citations for the sources of information used in the answers.
+## What Is It?
 
-##  Tech Stack
+A multi-turn conversational AI system that answers university admission questions using official institutional documents (UG/PG prospectuses, syllabi, timetables, and FAQs). If local documents do not contain the answer, it dynamically falls back to live web search to deliver accurate and cited answers.
 
-*   **Language**: Python 3.8+
-*   **LLM**: Google Gemini
-*   **Orchestration**: LangChain, LangChain Community
-*   **Vector Database**: ChromaDB
-*   **Reranking**: Sentence Transformers (`cross-encoder/ms-marco-MiniLM-L-6-v2`)
-*   **Web Frameworks**: Streamlit (Frontend), FastAPI (Backend)
-*   **PDF Processing**: PyPDF, PyMuPDF
+---
 
-##  Prerequisites
+## Key Features
 
-*   Python 3.8 or higher
-*   Google Gemini API Key (set as an environment variable or in `.env` file)
+- **Hybrid Retrieval & Reranking**: Vector retrieval via ChromaDB (`BAAI/bge-base-en-v1.5`) paired with Cross-Encoder reranking (`ms-marco-MiniLM-L-6-v2`) for high precision.
+- **Dynamic Web Search Fallback**: Seamless integration with Tavily Search when university documents lack context, returning up-to-date web citations.
+- **Smart Conversational Memory**: Preserves multi-turn session context with automatic summarization middleware to prevent token overflow.
+- **Fast-Path Greeting Handling**: Responds to greetings instantly without unnecessary LLM or search tool calls.
+- **Dual Interfaces**:
+  - **Streamlit App**: Interactive chat UI featuring session history, memory compression status, and reset controls.
+  - **FastAPI Backend**: REST API endpoint (`/api/chat`) for seamless external integration.
+- **Source Citations**: Clearly references local document excerpts and web sources.
 
-##  Installation
+---
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <https://github.com/Austin8547/RAG>
-    cd <RAG>
-    ```
+## What's Inside?
 
-2.  **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3.  **Set up Environment Variables**:
-    Create a `.env` file in the root directory and add your Google API Key:
-    ```env
-    GOOGLE_API_KEY=your_api_key_here
-    ```
-
-##  Usage
-
-### Option 1: Streamlit UI
-Run the interactive web application:
-```bash
-streamlit run streamlit_app.py
+```text
+University_Admission_chatbot/
+├── data/                  # Knowledge base documents
+│   ├── info/              # General FAQs, contact details, and credentials
+│   ├── pg/                # PG prospectuses & timetables (PDFs)
+│   └── ug/                # UG prospectuses & syllabus documents
+├── chroma_db_data/        # Persistent Chroma vector store
+├── src/
+│   ├── ingestion/         # Document loading, text chunking & vector storage
+│   ├── embeddings/        # HuggingFace / BAAI embedding model setup
+│   ├── retriever/         # Chroma retrieval & document source citation formatting
+│   ├── ragchain/          # RAG pipeline, reranker, memory middleware & Tavily tool
+│   └── config.py          # Centralized configuration & environment settings
+├── streamlit_app.py       # Streamlit web interface
+├── app.py                 # FastAPI REST API server
+├── main.py                # Data ingestion script to build the vector database
+├── test_rag.py            # Quick test script for query verification
+└── requirements.txt       # Project dependencies
 ```
-This will launch the app in your default web browser (usually at `http://localhost:8501`).
 
-### Option 2: FastAPI Backend
-Run the API server:
-```bash
-python app.py
-```
-Or using uvicorn directly:
-```bash
-uvicorn app:app --reload
-```
-The API will be available at `http://localhost:8000`. You can test the endpoints at `http://localhost:8000/docs`.
-##  Project Structure
+---
 
-*   `main.py`: Main entry point for the application (can run both Streamlit and FastAPI).
-*   `streamlit_app.py`: Main entry point for the Streamlit application.
-*   `app.py`: Main entry point for the FastAPI application.
-*   `test.py`: Contains unit and integration tests for the application.
-*   `src/`: Source code directory.
-    *   `ingestion/`: Logic for data ingestion and processing.
-    *   `embeddings/`: Logic for generating and managing embeddings.
-    *   `ragchain/`: Logic for the RAG pipeline.
-    *   `retriever/`: Database and retrieval logic.
-*   `static/`: Static assets (images, CSS, etc.).
-*   `data/`: Source documents for the knowledge base.
+## Tech Stack
+
+- **LLM**: Groq (`qwen/qwen3.8-27b`)
+- **Embeddings**: HuggingFace BAAI (`BAAI/bge-base-en-v1.5`)
+- **Reranker**: Cross-Encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2`)
+- **Vector Database**: ChromaDB
+- **Web Search**: Tavily Search API
+- **Frameworks**: LangChain, Streamlit, FastAPI, Uvicorn
+
+---
+
+## Setup & Usage
+
+### 1. Installation
+
+```bash
+git clone https://github.com/Austin8547/RAG.git
+cd University_Admission_chatbot
+pip install -r requirements.txt
+```
+
+### 2. Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+TAVILY_API_KEY=your_tavily_api_key
+```
+
+### 3. Ingest Documents (Build Vector Database)
+
+Load and index documents from `data/` into ChromaDB:
+
+```bash
+python main.py
+```
+
+### 4. Run Applications
+
+- **Streamlit Web UI**:
+  ```bash
+  streamlit run streamlit_app.py
+  ```
+  Accessible at `http://localhost:8501`.
+
+- **FastAPI Server**:
+  ```bash
+  python app.py
+  ```
+  Or using Uvicorn:
+  ```bash
+  uvicorn app:app --reload
+  ```
+  Accessible at `http://localhost:8000` (API documentation at `http://localhost:8000/docs`).
+
+- **Test the RAG Chain**:
+  ```bash
+  python test_rag.py
+  ```

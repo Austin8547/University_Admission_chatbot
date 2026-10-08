@@ -28,6 +28,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 class QueryRequest(BaseModel):
     query: str
+    session_id: str = "default"
 
 @app.get("/")
 async def read_root():
@@ -36,7 +37,7 @@ async def read_root():
 @app.post("/api/chat")
 async def chat_endpoint(request: QueryRequest):
     try:
-        response_text = run_chain(request.query)
+        response_text = run_chain(request.query, session_id=request.session_id)
         return {"answer": response_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

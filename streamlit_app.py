@@ -6,7 +6,9 @@ import base64
 # Add root to sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+import uuid
 from src.ragchain.rag_chain import run_chain
+from src.ragchain.memory_context import get_memory_context, clear_memory_context
 
 
 # ------------------ PAGE CONFIG ------------------
@@ -15,6 +17,10 @@ st.set_page_config(
     page_icon="static/logo.png",
     layout="wide",
 )
+
+# ------------------ SESSION STATE ------------------
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
 
 # ------------------ FUNCTIONS ------------------
 def get_base64_of_bin_file(bin_file):
@@ -30,9 +36,22 @@ with st.sidebar:
     st.title("Options")
     
     # Clear Chat Button
-    if st.button("🗑️ Clear Chat", type="primary"):
+    if st.button(" Clear Chat", type="primary"):
         st.session_state.messages = []
+        clear_memory_context(st.session_state.session_id)
         st.rerun()
+    
+    st.divider()
+    
+    # Memory Context Status & Summary
+    current_memory = get_memory_context(st.session_state.session_id)
+    st.subheader("🧠 Memory Context")
+    if current_memory.summary:
+        with st.expander("📝 Compressed Summary (API Saver)", expanded=True):
+            st.info(current_memory.summary)
+    
+    msg_count = len(current_memory.messages)
+    st.caption(f"Active buffer: {msg_count}/10 messages before next auto-summary")
     
     st.divider()
     
@@ -138,7 +157,7 @@ if prompt:
     # Get RAG Response
     with st.spinner("Thinking..."):
         try:
-            response = run_chain(prompt)
+            response = run_chain(prompt, session_id=st.session_state.session_id)
         except Exception as e:
             response = f"Sorry, I encountered an error: {e}"
 

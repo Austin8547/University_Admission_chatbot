@@ -9,10 +9,13 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if GROQ_API_KEY is None:
     raise ValueError("GROQ_API_KEY not found! Add it inside your .env file.")
 
-# Local SentenceTransformer embedding model (no API key needed for this)
+TAVILY_API_KEY = os.getenv("TAVILY_API_KEY")
+
+if TAVILY_API_KEY is None:
+    raise ValueError("TAVILY_API_KEY not found! Add it inside your .env file.")
+
 EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
 
-# Groq LLM model configuration
 LLM_MODEL = "qwen/qwen3.8-27b"
 
 CHUNK_SIZE = 500
