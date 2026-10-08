@@ -63,7 +63,8 @@ University_Admission_chatbot/
 ### 1. Installation
 
 ```bash
-git clone https://github.com/Austin8547/RAG.git
+git clone https://github.com/Austin8547/
+University_Admission_chatbot.git
 cd University_Admission_chatbot
 pip install -r requirements.txt
 ```
@@ -91,19 +92,4 @@ python main.py
   ```bash
   streamlit run streamlit_app.py
   ```
-  Accessible at `http://localhost:8501`.
-
-- **FastAPI Server**:
-  ```bash
-  python app.py
-  ```
-  Or using Uvicorn:
-  ```bash
-  uvicorn app:app --reload
-  ```
-  Accessible at `http://localhost:8000` (API documentation at `http://localhost:8000/docs`).
-
-- **Test the RAG Chain**:
-  ```bash
-  python test_rag.py
-  ```
+ 
